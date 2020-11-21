@@ -1,7 +1,6 @@
 ﻿using CSCore.Tags.ID3.Frames;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -66,13 +65,13 @@ namespace CSCore.Tags.ID3
             }
         }
 
-        public Stream Image
+        public byte[] Image
         {
             get
             {
                 Frame f;
                 if ((f = _id3[FrameID.AttachedPicutre]) != null)
-                    return (f as PictureFrame).Image;
+                    return (f as PictureFrame).RawData;
                 return null;
             }
         }
