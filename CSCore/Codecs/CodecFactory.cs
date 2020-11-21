@@ -151,6 +151,87 @@ namespace CSCore.Codecs
             return Default(filename);
         }
 
+        public IWaveSource GetCodec(Stream stream,string extension)
+        {
+            IWaveSource source = null;
+            
+            try
+            {
+                foreach (var codecEntry in _codecs)
+                {
+                    try
+                    {
+                        if (
+                            codecEntry.Value.FileExtensions.Any(
+                                x => x.Equals(extension, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            var action = codecEntry.Value.GetCodecAction;
+                            source = action(stream);
+                            if (source != null)
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
+                }
+            }
+            finally
+            {
+                if (source == null)
+                {
+                    stream.Dispose();
+                }
+                else
+                {
+                    source = new DisposeFileStreamSource(source, stream);
+                }
+            }
+
+            return source;
+        }
+        
+        public IWaveSource GetCodec(Stream stream)
+        {
+            IWaveSource source = null;
+            
+            try
+            {
+                foreach (var codecEntry in _codecs)
+                {
+                    try
+                    {
+                        source = codecEntry.Value.GetCodecAction(stream);
+
+                        if (source.Length > 0)
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
+                }
+            }
+            finally
+            {
+                if (source == null)
+                {
+                    stream.Dispose();
+                }
+                else
+                {
+                    source = new DisposeFileStreamSource(source, stream);
+                }
+            }
+
+            return source;
+        }
+        
+        
+
         /// <summary>
         ///     Returns a fully initialized <see cref="IWaveSource" /> instance which is able to decode the audio source behind the
         ///     specified <paramref name="uri" />.
