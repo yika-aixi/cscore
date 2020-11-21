@@ -4,7 +4,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Net.Configuration;
 using System.Reflection;
 using System.Threading;
 using CSCore.Utils;
@@ -405,34 +404,36 @@ namespace CSCore.Codecs.MP3
         //Copied from http://social.msdn.microsoft.com/forums/en-US/netfxnetcom/thread/ff098248-551c-4da9-8ba5-358a9f8ccc57/
         private static bool SetAllowUnsafeHeaderParsing20()
         {
-            //Get the assembly that contains the internal class
-            Assembly aNetAssembly = Assembly.GetAssembly(typeof (SettingsSection));
-            if (aNetAssembly != null)
-            {
-                //Use the assembly in order to get the internal type for the internal class
-                Type aSettingsType = aNetAssembly.GetType("System.Net.Configuration.SettingsSectionInternal");
-                if (aSettingsType != null)
-                {
-                    //Use the internal static property to get an instance of the internal settings class.
-                    //If the static instance isn't created allready the property will create it for us.
-                    object anInstance = aSettingsType.InvokeMember("Section",
-                        BindingFlags.Static | BindingFlags.GetProperty | BindingFlags.NonPublic, null, null,
-                        new object[] {});
-
-                    if (anInstance != null)
-                    {
-                        //Locate the private bool field that tells the framework is unsafe header parsing should be allowed or not
-                        FieldInfo aUseUnsafeHeaderParsing = aSettingsType.GetField("useUnsafeHeaderParsing",
-                            BindingFlags.NonPublic | BindingFlags.Instance);
-                        if (aUseUnsafeHeaderParsing != null)
-                        {
-                            aUseUnsafeHeaderParsing.SetValue(anInstance, true);
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            return true;
+            
+            // //Get the assembly that contains the internal class
+            // Assembly aNetAssembly = Assembly.GetAssembly(typeof (SettingsSection));
+            // if (aNetAssembly != null)
+            // {
+            //     //Use the assembly in order to get the internal type for the internal class
+            //     Type aSettingsType = aNetAssembly.GetType("System.Net.Configuration.SettingsSectionInternal");
+            //     if (aSettingsType != null)
+            //     {
+            //         //Use the internal static property to get an instance of the internal settings class.
+            //         //If the static instance isn't created allready the property will create it for us.
+            //         object anInstance = aSettingsType.InvokeMember("Section",
+            //             BindingFlags.Static | BindingFlags.GetProperty | BindingFlags.NonPublic, null, null,
+            //             new object[] {});
+            //
+            //         if (anInstance != null)
+            //         {
+            //             //Locate the private bool field that tells the framework is unsafe header parsing should be allowed or not
+            //             FieldInfo aUseUnsafeHeaderParsing = aSettingsType.GetField("useUnsafeHeaderParsing",
+            //                 BindingFlags.NonPublic | BindingFlags.Instance);
+            //             if (aUseUnsafeHeaderParsing != null)
+            //             {
+            //                 aUseUnsafeHeaderParsing.SetValue(anInstance, true);
+            //                 return true;
+            //             }
+            //         }
+            //     }
+            // }
+            // return false;
         }
     }
 }

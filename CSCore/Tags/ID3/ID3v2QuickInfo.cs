@@ -65,13 +65,13 @@ namespace CSCore.Tags.ID3
             }
         }
 
-        public System.Drawing.Image Image
+        public byte[] Image
         {
             get
             {
                 Frame f;
                 if ((f = _id3[FrameID.AttachedPicutre]) != null)
-                    return (f as PictureFrame).Image;
+                    return (f as PictureFrame).RawData;
                 return null;
             }
         }
