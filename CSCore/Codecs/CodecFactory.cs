@@ -179,11 +179,7 @@ namespace CSCore.Codecs
             }
             finally
             {
-                if (source == null)
-                {
-                    stream.Dispose();
-                }
-                else
+                if (source != null)
                 {
                     source = new DisposeFileStreamSource(source, stream);
                 }
@@ -217,11 +213,7 @@ namespace CSCore.Codecs
             }
             finally
             {
-                if (source == null)
-                {
-                    stream.Dispose();
-                }
-                else
+                if (source != null)
                 {
                     source = new DisposeFileStreamSource(source, stream);
                 }
