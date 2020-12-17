@@ -154,34 +154,29 @@ namespace CSCore.Codecs
         public IWaveSource GetCodec(Stream stream,string extension)
         {
             IWaveSource source = null;
-            
-            try
+
+            if (extension[0] == '.')
             {
-                foreach (var codecEntry in _codecs)
+                extension = extension.Remove(0, 1);
+            }
+            
+            foreach (var codecEntry in _codecs)
+            {
+                try
                 {
-                    try
+                    if (
+                        codecEntry.Value.FileExtensions.Any(
+                            x => x.Equals(extension, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (
-                            codecEntry.Value.FileExtensions.Any(
-                                x => x.Equals(extension, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            var action = codecEntry.Value.GetCodecAction;
-                            source = action(stream);
-                            if (source != null)
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
+                        var action = codecEntry.Value.GetCodecAction;
+                        source = action(stream);
+                        if (source != null)
+                            break;
                     }
                 }
-            }
-            finally
-            {
-                if (source != null)
+                catch (Exception ex)
                 {
-                    source = new DisposeFileStreamSource(source, stream);
+                    Debug.WriteLine(ex.ToString());
                 }
             }
 
@@ -192,30 +187,20 @@ namespace CSCore.Codecs
         {
             IWaveSource source = null;
             
-            try
+            foreach (var codecEntry in _codecs)
             {
-                foreach (var codecEntry in _codecs)
+                try
                 {
-                    try
-                    {
-                        source = codecEntry.Value.GetCodecAction(stream);
+                    source = codecEntry.Value.GetCodecAction(stream);
 
-                        if (source.Length > 0)
-                        {
-                            break;
-                        }
-                    }
-                    catch (Exception ex)
+                    if (source.Length > 0)
                     {
-                        Debug.WriteLine(ex.ToString());
+                        break;
                     }
                 }
-            }
-            finally
-            {
-                if (source != null)
+                catch (Exception ex)
                 {
-                    source = new DisposeFileStreamSource(source, stream);
+                    Debug.WriteLine(ex.ToString());
                 }
             }
 
